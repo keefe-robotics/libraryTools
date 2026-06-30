@@ -5,8 +5,10 @@ Program entry point.
 """
 
 from __future__ import annotations
+from version import __version__
 
 import sys
+import platform
 from collections import Counter
 
 from cache import Cache
@@ -45,7 +47,8 @@ def main() -> int:
         else:
             uncached_count += 1
 
-    print("Destiny MARC Builder")
+    print(f"Destiny MARC Builder v{__version__}")
+    print(f"Python {platform.python_version()}")
     print()
     print(f"Input file: {input_file}")
     print(f"ISBN entries found: {len(rows)}")
