@@ -6,24 +6,40 @@ Program entry point.
 
 from __future__ import annotations
 
+import sys
+
 from config import load_settings
+from excel_reader import ExcelReader
 
 
 def main() -> int:
     settings = load_settings()
 
+    if len(sys.argv) < 2:
+        print("Usage:")
+        print("  python main.py input.xlsx")
+        print("  python main.py isbn_list.txt")
+        print("  python main.py isbn_list.csv")
+        return 1
+
+    input_file = sys.argv[1]
+
+    reader = ExcelReader()
+    rows = reader.read(input_file)
+
+    unique_isbns = sorted({row.isbn for row in rows})
+
     print("Destiny MARC Builder")
     print()
-    print("Settings loaded:")
-    print(f"  Google API key: {'configured' if settings.google_api_key else 'not configured'}")
-    print(f"  Lookup delay: {settings.lookup_delay}")
-    print(f"  Timeout: {settings.timeout}")
-    print(f"  Retry count: {settings.retry_count}")
-    print(f"  Cache database: {settings.cache_database}")
-    print(f"  Include Google link: {settings.include_google_link}")
-    print(f"  Description length: {settings.description_length}")
-    print(f"  Audit report: {settings.write_audit_report}")
-    print(f"  Summary report: {settings.write_summary_report}")
+    print(f"Input file: {input_file}")
+    print(f"ISBN entries found: {len(rows)}")
+    print(f"Unique ISBNs: {len(unique_isbns)}")
+    print(f"Google API key: {'configured' if settings.google_api_key else 'not configured'}")
+
+    print()
+    print("First 10 ISBNs:")
+    for row in rows[:10]:
+        print(f"  row {row.row_number}: {row.isbn}")
 
     return 0
 
